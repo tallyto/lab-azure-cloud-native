@@ -1,0 +1,21 @@
+docker build -t az204/page:latest .
+
+docker run -d -p 80:80 az204/page:latest
+
+az login
+
+az acr login --name akslab001devregistry
+
+docker tag az204/page:latest akslab001devregistry.azurecr.io/az204-page:latest
+
+docker push akslab001devregistry.azurecr.io/az204-page:latest
+
+Criar arquivo de Services.yml e Deployment.yaml
+
+az aks get-credentials --resource-group akslab001dev_group --name akslab001dev
+
+kubectl apply -f deployment.yaml
+
+kubectl apply -f service.yaml
+
+kubectl get svc lab-aks-service

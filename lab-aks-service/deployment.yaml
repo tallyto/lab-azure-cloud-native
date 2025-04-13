@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-aks-service
+  labels:
+    app: lab-aks-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lab-aks-service
+  template:
+    metadata:
+      labels:
+        app: lab-aks-service
+    spec:
+      containers:
+        - name: lab-aks-service
+          image: akslab001devregistry.azurecr.io/az204-page:latest
+          ports:
+            - containerPort: 80
+          env:
+         
