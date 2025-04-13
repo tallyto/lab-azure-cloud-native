@@ -6,7 +6,6 @@ import uuid
 from dotenv import load_dotenv
 from sqlalchemy.engine import URL
 from sqlalchemy import create_engine
-import pymssql  # Importamos o pymssql
 
 # Carrega variáveis do .env
 load_dotenv()
