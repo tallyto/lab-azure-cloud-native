@@ -44,7 +44,7 @@ Antes de executar o script, certifique-se de ter os seguintes itens instalados e
 
 1. Clone este repositório:
     ```bash
-    git clone <URL_DO_REPOSITORIO>
+    git clone https://github.com/tallyto/lab-azure-cloud-native.git
     cd lab-azure-cloud-native/lab-container-service
     ```
 
