@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/c442304d-037e-4f83-aeec-7c6e483513b4/resourceGroups/azure_students_rc/providers/Microsoft.Web/sites/web-app-001",
+    "appService.deploySubpath": "lab-web-app-service"
+}
