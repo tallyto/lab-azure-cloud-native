@@ -68,7 +68,7 @@ namespace fnGeradorBoletos
                 string baseCode = string.Concat(bankCode, valorStr, dateStr);
 
                 // preenchimento do barcode para 44 caracteres
-                barcodeData = bankCode.Length < 44 ? baseCode.PadRight(44, '0') : baseCode.Substring(0, 44);
+                barcodeData = baseCode.Length < 44 ? baseCode.PadRight(44, '0') : baseCode.Substring(0, 44);
 
                 _logger.LogInformation($"Barcode data: {barcodeData}");
 
@@ -84,7 +84,7 @@ namespace fnGeradorBoletos
 
                     var resultObject = new
                     {
-                        barcode = baseCode,
+                        barcode = barcodeData,
                         valorOriginal,
                         DataVencimento = dataVencimento,
                         ImageBase64 = base64Image,
