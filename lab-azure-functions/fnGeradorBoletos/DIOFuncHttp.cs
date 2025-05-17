@@ -75,7 +75,7 @@ namespace fnGeradorBoletos
                 Barcode barcode = new Barcode();
 
                 var skImage = barcode.Encode(BarcodeStandard.Type.Code128, barcodeData);
-                
+
                 using (var encodeData = skImage.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100))
                 {
                     var imageBytes = encodeData.ToArray();
@@ -91,6 +91,8 @@ namespace fnGeradorBoletos
                     };
 
                     await SendFileFallback(resultObject, _serviceBusConnectionString, _queueName);
+                    
+                    return new OkObjectResult(resultObject);
                 }
 
             }
@@ -98,7 +100,7 @@ namespace fnGeradorBoletos
             {
                 return new BadRequestObjectResult($"Error: {ex.Message}");
             }
-            return new OkObjectResult("Message sent to Service Bus queue successfully.");
+            
 
 
         }
