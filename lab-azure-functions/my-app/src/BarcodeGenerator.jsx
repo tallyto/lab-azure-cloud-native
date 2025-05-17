@@ -6,12 +6,15 @@ function BarcodeGenerator() {
   const [barcode, setBarcode] = useState("");
   const [imageBase64, setImageBase64] = useState("");
   const [loading, setLoading] = useState(false);
+  const [validating, setValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setBarcode("");
     setImageBase64("");
+    setValidationResult(null);
     try {
       const response = await fetch("http://localhost:7071/api/barcode-generate", {
         method: "POST",
@@ -28,6 +31,23 @@ function BarcodeGenerator() {
       alert("Erro ao gerar código de barras.");
     }
     setLoading(false);
+  };
+
+  const handleValidate = async () => {
+    setValidating(true);
+    setValidationResult(null);
+    try {
+      const response = await fetch("http://localhost:7071/api/barcode-validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ barcode }),
+      });
+      const data = await response.json();
+      setValidationResult(data.isValid === true);
+    } catch (error) {
+      setValidationResult(false);
+    }
+    setValidating(false);
   };
 
   return (
@@ -169,6 +189,40 @@ function BarcodeGenerator() {
                 boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
               }}
             />
+          )}
+          <button
+            onClick={handleValidate}
+            disabled={validating}
+            style={{
+              marginTop: 18,
+              padding: "10px 20px",
+              borderRadius: 8,
+              border: "none",
+              background: "#38a169",
+              color: "#fff",
+              fontWeight: 600,
+              fontSize: 16,
+              cursor: validating ? "not-allowed" : "pointer",
+              transition: "background 0.2s",
+              boxShadow: "0 2px 8px rgba(56,161,105,0.08)",
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            {validating ? "Validando..." : "Validar Código"}
+          </button>
+          {validationResult !== null && (
+            <div
+              style={{
+                marginTop: 12,
+                fontWeight: 600,
+                color: validationResult ? "#38a169" : "#e53e3e",
+                fontSize: 16,
+              }}
+            >
+              {validationResult ? "Código válido ✅" : "Código inválido ❌"}
+            </div>
           )}
         </div>
       )}

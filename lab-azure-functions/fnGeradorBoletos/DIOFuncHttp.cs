@@ -52,23 +52,32 @@ namespace fnGeradorBoletos
                     return new BadRequestObjectResult("Data de vencimento inválida. Formato esperado: yyyy-MM-dd.");
                 }
 
-                string dateStr = vencimento.ToString("yyyyMMdd");
+                // Cálculo do fator de vencimento (dias desde 07/10/1997)
+                DateTime baseDate = new DateTime(1997, 10, 7);
+                int fatorVencimento = (vencimento - baseDate).Days;
+                string fatorVencimentoStr = fatorVencimento.ToString("D4");
 
-                // Conversão do valor para centavos ate 8 dígitos
-
+                // Conversão do valor para centavos, 10 dígitos
                 if (!Decimal.TryParse(valorOriginal, out decimal valorDecimal))
                 {
                     return new BadRequestObjectResult("Valor original inválido.");
                 }
+                long valorCentavos = (long)(valorDecimal * 100);
+                string valorStr = valorCentavos.ToString("D10");
 
-                int valorCentavos = (int)(valorDecimal * 100);
-                string valorStr = valorCentavos.ToString("D8");
+                // Montagem dos campos do código de barras
+                string banco = "001"; // Exemplo: Banco do Brasil
+                string moeda = "9";   // Real
+                string campoLivre = new string('0', 25); // Preenchido com zeros
 
-                string bankCode = "006";
-                string baseCode = string.Concat(bankCode, valorStr, dateStr);
+                // Monta sem o DV geral
+                string codigoSemDV = banco + moeda + fatorVencimentoStr + valorStr + campoLivre;
 
-                // preenchimento do barcode para 44 caracteres
-                barcodeData = baseCode.Length < 44 ? baseCode.PadRight(44, '0') : baseCode.Substring(0, 44);
+                // Calcula DV geral (módulo 11)
+                int dvGeral = CalcularModulo11(codigoSemDV);
+
+                // Monta o código de barras final (44 dígitos)
+                barcodeData = banco + moeda + dvGeral.ToString() + fatorVencimentoStr + valorStr + campoLivre;
 
                 _logger.LogInformation($"Barcode data: {barcodeData}");
 
@@ -105,6 +114,46 @@ namespace fnGeradorBoletos
 
         }
 
+        [FunctionName("barcode-validate")]
+        public static async Task<IActionResult> ValidateBarcode(
+    [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
+        {
+            try
+            {
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                dynamic data = JsonConvert.DeserializeObject(requestBody);
+                string barcode = data?.barcode;
+
+                if (string.IsNullOrEmpty(barcode))
+                {
+                    return new BadRequestObjectResult("Barcode é obrigatório.");
+                }
+
+                // Validação do DV geral (módulo 11)
+                // Estrutura: BBBM D FFFF VVVVVVVVVV CCCCCCCCCCCCCCCCCCCCCCCCCCC
+                // BBB: banco, M: moeda, D: DV, FFFF: fator vencimento, VVVVVVVVVV: valor, C...: campo livre
+                string codigoSemDV = barcode.Substring(0, 4) + barcode.Substring(5); // Remove o DV (posição 4)
+                int dvInformado = int.Parse(barcode.Substring(4, 1));
+                int dvCalculado = CalcularModulo11(codigoSemDV);
+
+                bool dvValido = dvInformado == dvCalculado;
+
+                // Retorna objeto detalhado
+                var result = new
+                {
+                    isValid = dvValido,
+                    dvInformado,
+                    dvCalculado
+                };
+
+                return new OkObjectResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult($"Erro: {ex.Message}");
+            }
+        }
+
         private static async Task SendFileFallback(object resultObject, string serviceBusConnectionString, string queueName)
         {
             await using var client = new ServiceBusClient(serviceBusConnectionString);
@@ -116,6 +165,23 @@ namespace fnGeradorBoletos
 
             await sender.SendMessageAsync(message);
             Console.WriteLine($"Message sent to queue: {queueName}");
+        }
+
+        // Função para cálculo do módulo 11 (DV geral)
+        private static int CalcularModulo11(string input)
+        {
+            int soma = 0;
+            int peso = 2;
+            for (int i = input.Length - 1; i >= 0; i--)
+            {
+                soma += (input[i] - '0') * peso;
+                peso++;
+                if (peso > 9) peso = 2;
+            }
+            int resto = soma % 11;
+            int dv = 11 - resto;
+            if (dv == 0 || dv == 10 || dv == 11) dv = 1;
+            return dv;
         }
     }
 }
