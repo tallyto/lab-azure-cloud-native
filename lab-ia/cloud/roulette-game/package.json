@@ -1,0 +1,16 @@
+{
+  "name": "roulette-game",
+  "version": "1.0.0",
+  "description": "A roulette game that simulates the physics of a spinning wheel and a bouncing ball.",
+  "main": "src/js/roulette.js",
+  "scripts": {
+    "start": "live-server src",
+    "build": "echo 'Build step can be added here'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Roulette</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <audio id="wheelSound" loop>
+        <source src="assets/wheel-spinning.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="ballSound" loop>
+        <source src="assets/ball-spinning.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="winSound">
+        <source src="assets/win.mp3" type="audio/mpeg">
+    </audio>
+    <div id="roulette-container">
+        <div id="roulette-wheel">
+            <div class="wheel-center">
+                <div class="wheel-center-inner"></div>
+                <div class="wheel-center-logo">CASINO ROYALE</div>
+            </div>
+            <div id="ball"></div>
+        </div>
+    </div>
+    <button id="spin-button">SPIN</button>
+    <div id="result">Place your bets!</div>
+    
+    <script src="js/roulette.js"></script>
+</body>
+</html>

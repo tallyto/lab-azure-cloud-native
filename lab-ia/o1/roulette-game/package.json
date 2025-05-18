@@ -1,0 +1,21 @@
+{
+  "name": "roulette-game",
+  "version": "1.0.0",
+  "description": "A simple roulette game implemented with HTML, CSS, and JavaScript using canvas for rendering.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "live-server src"
+  },
+  "keywords": [
+    "roulette",
+    "game",
+    "canvas",
+    "javascript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
+}
