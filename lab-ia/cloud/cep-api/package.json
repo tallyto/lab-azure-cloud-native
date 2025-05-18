@@ -1,0 +1,16 @@
+{
+  "name": "cep-api",
+  "version": "1.0.0",
+  "description": "API to fetch address data from CEP using Via Cep",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "axios": "^0.21.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
