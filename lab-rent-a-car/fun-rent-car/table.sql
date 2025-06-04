@@ -1,0 +1,10 @@
+CREATE TABLE locacao (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nome NVARCHAR(100) NOT NULL,
+    email NVARCHAR(100) NOT NULL,
+    modelo NVARCHAR(100) NOT NULL,
+    ano INT NOT NULL,
+    tempo_aluguel NVARCHAR(50) NOT NULL,
+    data DATETIME2 NOT NULL,
+    data_insercao DATETIME2 NOT NULL DEFAULT GETDATE(),
+);

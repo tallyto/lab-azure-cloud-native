@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "fun_rent_car": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7005",
+      "launchBrowser": false
+    }
+  }
+}
