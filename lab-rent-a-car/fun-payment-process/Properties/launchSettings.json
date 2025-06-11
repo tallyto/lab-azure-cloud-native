@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "fun_payment_process": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7208",
+      "launchBrowser": false
+    }
+  }
+}
