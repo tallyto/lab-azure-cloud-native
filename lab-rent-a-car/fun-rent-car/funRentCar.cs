@@ -69,6 +69,27 @@ namespace fun_rent_car
                     }
                 }
                 log.LogInformation("Data inserted into database successfully.");
+
+                // Publish to payment-queue
+                try
+                {
+                    var serviceBusConnectionString = System.Environment.GetEnvironmentVariable("ServiceBusConnection", EnvironmentVariableTarget.Process);
+                    if (string.IsNullOrEmpty(serviceBusConnectionString))
+                    {
+                        log.LogError("Service Bus connection string is missing.");
+                        return;
+                    }
+                    var client = new Azure.Messaging.ServiceBus.ServiceBusClient(serviceBusConnectionString);
+                    var sender = client.CreateSender("payment-queue");
+                    var messageBody = JsonConvert.SerializeObject(rent);
+                    var message = new Azure.Messaging.ServiceBus.ServiceBusMessage(messageBody);
+                    sender.SendMessageAsync(message).GetAwaiter().GetResult();
+                    log.LogInformation("Message sent to payment-queue.");
+                }
+                catch (Exception ex)
+                {
+                    log.LogError($"Error sending message to payment-queue: {ex.Message}");
+                }
             }
             catch (Exception ex)
             {
